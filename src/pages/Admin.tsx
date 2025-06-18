@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,11 +8,13 @@ import { Upload, Save, ArrowLeft, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useProducts, ProductCategory } from '@/contexts/ProductsContext';
 import ProductCategoryEditor from '@/components/ProductCategoryEditor';
+import ProductEditor from '@/components/ProductEditor';
 import { useToast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Admin = () => {
   const navigate = useNavigate();
-  const { categories, updateCategory, addCategory, deleteCategory } = useProducts();
+  const { categories, updateCategory, addCategory, deleteCategory, addProduct, updateProduct, deleteProduct } = useProducts();
   const { toast } = useToast();
   const [heroImage, setHeroImage] = useState('');
 
@@ -22,6 +23,18 @@ const Admin = () => {
     description: '',
     image: '',
     items: ['']
+  });
+
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    description: '',
+    detailedDescription: '',
+    images: [''],
+    type: '',
+    origin: '',
+    weight: '',
+    pricePerKg: '',
+    categoryId: ''
   });
 
   const handleSave = () => {
@@ -53,6 +66,36 @@ const Admin = () => {
     }
   };
 
+  const handleAddNewProduct = () => {
+    if (newProduct.name && newProduct.description && newProduct.categoryId) {
+      addProduct(newProduct.categoryId, {
+        name: newProduct.name,
+        description: newProduct.description,
+        detailedDescription: newProduct.detailedDescription,
+        images: newProduct.images.filter(img => img.trim() !== ''),
+        type: newProduct.type,
+        origin: newProduct.origin,
+        weight: newProduct.weight,
+        pricePerKg: newProduct.pricePerKg
+      });
+      setNewProduct({
+        name: '',
+        description: '',
+        detailedDescription: '',
+        images: [''],
+        type: '',
+        origin: '',
+        weight: '',
+        pricePerKg: '',
+        categoryId: ''
+      });
+      toast({
+        title: "Succès",
+        description: "Nouveau produit ajouté avec succès!",
+      });
+    }
+  };
+
   const handleNewCategoryItemChange = (index: number, value: string) => {
     const newItems = [...newCategory.items];
     newItems[index] = value;
@@ -67,6 +110,23 @@ const Admin = () => {
     setNewCategory(prev => ({
       ...prev,
       items: prev.items.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleNewProductImageChange = (index: number, value: string) => {
+    const newImages = [...newProduct.images];
+    newImages[index] = value;
+    setNewProduct(prev => ({ ...prev, images: newImages }));
+  };
+
+  const addNewProductImage = () => {
+    setNewProduct(prev => ({ ...prev, images: [...prev.images, ''] }));
+  };
+
+  const removeNewProductImage = (index: number) => {
+    setNewProduct(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
     }));
   };
 
@@ -87,9 +147,9 @@ const Admin = () => {
           </h1>
         </div>
 
-        {/* Section gestion des produits */}
+        {/* Section gestion des catégories */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Gestion des Produits</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Gestion des Catégories</h2>
           
           {/* Catégories existantes */}
           {categories.map((category) => (
@@ -186,7 +246,166 @@ const Admin = () => {
           </Card>
         </div>
 
-        {/* Section gestion de la photo de bannière uniquement */}
+        {/* Section gestion des produits individuels */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Gestion des Produits Individuels</h2>
+          
+          {/* Produits existants */}
+          {categories.map((category) => 
+            category.products.map((product) => (
+              <ProductEditor
+                key={product.id}
+                product={product}
+                onUpdate={updateProduct}
+                onDelete={deleteProduct}
+              />
+            ))
+          )}
+
+          {/* Ajouter nouveau produit */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Plus className="w-5 h-5" />
+                Ajouter un nouveau produit
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="product-category">Catégorie</Label>
+                <Select value={newProduct.categoryId} onValueChange={(value) => setNewProduct(prev => ({ ...prev, categoryId: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner une catégorie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="product-name">Nom du produit</Label>
+                  <Input
+                    id="product-name"
+                    value={newProduct.name}
+                    onChange={(e) => setNewProduct(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="Nom du produit"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="product-type">Type</Label>
+                  <Input
+                    id="product-type"
+                    value={newProduct.type}
+                    onChange={(e) => setNewProduct(prev => ({ ...prev, type: e.target.value }))}
+                    placeholder="Type de produit"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="product-description">Description courte</Label>
+                <Textarea
+                  id="product-description"
+                  value={newProduct.description}
+                  onChange={(e) => setNewProduct(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Description courte du produit"
+                  rows={2}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="product-detailed-description">Description détaillée</Label>
+                <Textarea
+                  id="product-detailed-description"
+                  value={newProduct.detailedDescription}
+                  onChange={(e) => setNewProduct(prev => ({ ...prev, detailedDescription: e.target.value }))}
+                  placeholder="Description complète du produit"
+                  rows={4}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="product-origin">Origine</Label>
+                  <Input
+                    id="product-origin"
+                    value={newProduct.origin}
+                    onChange={(e) => setNewProduct(prev => ({ ...prev, origin: e.target.value }))}
+                    placeholder="Origine du produit"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="product-weight">Poids</Label>
+                  <Input
+                    id="product-weight"
+                    value={newProduct.weight}
+                    onChange={(e) => setNewProduct(prev => ({ ...prev, weight: e.target.value }))}
+                    placeholder="Poids (ex: 1.5-2kg)"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="product-price">Prix au kilo</Label>
+                  <Input
+                    id="product-price"
+                    value={newProduct.pricePerKg}
+                    onChange={(e) => setNewProduct(prev => ({ ...prev, pricePerKg: e.target.value }))}
+                    placeholder="Prix (ex: 25€/kg)"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label>Images du produit</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addNewProductImage}
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  {newProduct.images.map((image, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Input
+                        value={image}
+                        onChange={(e) => handleNewProductImageChange(index, e.target.value)}
+                        placeholder="URL de l'image"
+                      />
+                      {newProduct.images.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeNewProductImage(index)}
+                        >
+                          ×
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <Button
+                onClick={handleAddNewProduct}
+                className="w-full bg-butchery-red hover:bg-red-800 text-white"
+              >
+                Ajouter le produit
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Section gestion de la photo de bannière */}
         <div className="grid gap-6">
           <h2 className="text-2xl font-bold text-gray-900">Gestion de la photo de bannière</h2>
           

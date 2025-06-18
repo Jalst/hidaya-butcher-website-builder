@@ -1,9 +1,12 @@
 
 import React from 'react';
 import { useProducts } from '@/contexts/ProductsContext';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const ProductsSection = () => {
   const { categories } = useProducts();
+  const navigate = useNavigate();
 
   return (
     <section id="produits" className="py-20 bg-gray-50">
@@ -35,6 +38,32 @@ const ProductsSection = () => {
                 <p className="text-gray-600 mb-6 leading-relaxed">
                   {category.description}
                 </p>
+                
+                {/* Produits individuels */}
+                {category.products.length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="font-semibold text-gray-900 mb-3">Produits disponibles :</h4>
+                    <div className="space-y-2">
+                      {category.products.map((product) => (
+                        <div key={product.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                          <div>
+                            <h5 className="font-medium text-gray-900">{product.name}</h5>
+                            <p className="text-sm text-gray-600">{product.description}</p>
+                          </div>
+                          <Button
+                            size="sm"
+                            onClick={() => navigate(`/produit/${product.id}`)}
+                            className="bg-butchery-red hover:bg-red-800 text-white"
+                          >
+                            Voir détails
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Liste des articles généraux */}
                 <ul className="space-y-2">
                   {category.items.map((item, itemIndex) => (
                     <li key={itemIndex} className="flex items-start">
