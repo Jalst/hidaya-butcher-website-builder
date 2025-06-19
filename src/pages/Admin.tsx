@@ -51,7 +51,8 @@ const Admin = () => {
         title: newCategory.title,
         description: newCategory.description,
         image: newCategory.image,
-        items: newCategory.items.filter(item => item.trim() !== '')
+        items: newCategory.items.filter(item => item.trim() !== ''),
+        products: [] // Ajout de la propriété manquante
       });
       setNewCategory({
         title: '',
