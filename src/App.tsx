@@ -8,6 +8,7 @@ import { ProductsProvider } from "@/contexts/ProductsContext";
 import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import ProductDetail from "./pages/ProductDetail";
+import CategoryDetail from "./pages/CategoryDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/categorie/:categoryId" element={<CategoryDetail />} />
             <Route path="/produit/:productId" element={<ProductDetail />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
