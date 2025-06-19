@@ -64,7 +64,7 @@ const CategoryDetail = () => {
       {/* Contenu principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Produits spécifiques */}
-        {category.products.length > 0 && (
+        {category.products && category.products.length > 0 && (
           <div className="mb-12">
             <h2 className="font-playfair text-3xl font-bold text-butchery-red mb-8">
               Produits Disponibles
@@ -77,7 +77,7 @@ const CategoryDetail = () => {
                 >
                   <div className="h-48 overflow-hidden">
                     <img
-                      src={product.images[0] || category.image}
+                      src={product.images && product.images.length > 0 ? product.images[0] : category.image}
                       alt={product.name}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                     />
@@ -111,7 +111,7 @@ const CategoryDetail = () => {
         )}
 
         {/* Articles généraux */}
-        {category.items.length > 0 && (
+        {category.items && category.items.length > 0 && (
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <h2 className="font-playfair text-2xl font-bold text-butchery-red mb-6">
               Articles Disponibles
