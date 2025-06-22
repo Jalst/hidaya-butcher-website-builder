@@ -18,6 +18,17 @@ const Admin = () => {
   const { toast } = useToast();
   const [heroImage, setHeroImage] = useState('');
 
+  // Vérification de sécurité pour éviter l'erreur de map
+  if (!categories) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg text-gray-600">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
+
   const [newCategory, setNewCategory] = useState({
     title: '',
     description: '',
@@ -162,15 +173,19 @@ const Admin = () => {
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Gestion des Catégories</h2>
           
-          {/* Catégories existantes */}
-          {categories.map((category) => (
-            <ProductCategoryEditor
-              key={category.id}
-              category={category}
-              onUpdate={updateCategory}
-              onDelete={deleteCategory}
-            />
-          ))}
+          {/* Catégories existantes avec vérification de sécurité */}
+          {categories && categories.length > 0 ? (
+            categories.map((category) => (
+              <ProductCategoryEditor
+                key={category.id}
+                category={category}
+                onUpdate={updateCategory}
+                onDelete={deleteCategory}
+              />
+            ))
+          ) : (
+            <p className="text-gray-600 mb-6">Aucune catégorie trouvée.</p>
+          )}
 
           {/* Ajouter nouvelle catégorie */}
           <Card>
@@ -261,16 +276,22 @@ const Admin = () => {
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Gestion des Produits Individuels</h2>
           
-          {/* Produits existants */}
-          {categories.map((category) => 
-            category.products.map((product) => (
-              <ProductEditor
-                key={product.id}
-                product={product}
-                onUpdate={updateProduct}
-                onDelete={deleteProduct}
-              />
-            ))
+          {/* Produits existants avec vérification de sécurité */}
+          {categories && categories.length > 0 ? (
+            categories.map((category) => 
+              category.products && category.products.length > 0 ? (
+                category.products.map((product) => (
+                  <ProductEditor
+                    key={product.id}
+                    product={product}
+                    onUpdate={updateProduct}
+                    onDelete={deleteProduct}
+                  />
+                ))
+              ) : null
+            )
+          ) : (
+            <p className="text-gray-600 mb-6">Aucun produit trouvé.</p>
           )}
 
           {/* Ajouter nouveau produit */}
@@ -289,11 +310,15 @@ const Admin = () => {
                     <SelectValue placeholder="Sélectionner une catégorie" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.title}
-                      </SelectItem>
-                    ))}
+                    {categories && categories.length > 0 ? (
+                      categories.map((category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.title}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="" disabled>Aucune catégorie disponible</SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
