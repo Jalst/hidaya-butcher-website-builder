@@ -1,10 +1,10 @@
+
 import React from 'react';
-import { MapPin, Phone, Clock, Settings } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { MapPin, Phone, Clock } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-butchery-darkGray text-white py-12 relative">
+    <footer className="bg-butchery-darkGray text-white py-12">
       <div className="section-padding">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Logo et description */}
@@ -96,15 +96,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-
-      {/* Bouton d'administration discret */}
-      <Link
-        to="/admin"
-        className="absolute bottom-4 right-4 opacity-20 hover:opacity-100 transition-opacity duration-300"
-        title="Administration"
-      >
-        <Settings className="w-6 h-6 text-gray-400 hover:text-white" />
-      </Link>
     </footer>
   );
 };
