@@ -11,6 +11,7 @@ import ProductCategoryEditor from '@/components/ProductCategoryEditor';
 import ProductEditor from '@/components/ProductEditor';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import ImageUploader from '@/components/ImageUploader';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -217,15 +218,12 @@ const Admin = () => {
                 />
               </div>
 
-              <div>
-                <Label htmlFor="new-image">URL de l'image</Label>
-                <Input
-                  id="new-image"
-                  value={newCategory.image}
-                  onChange={(e) => setNewCategory(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
+              <ImageUploader
+                label="Image de la catégorie"
+                value={newCategory.image}
+                onChange={(value) => setNewCategory(prev => ({ ...prev, image: value }))}
+                placeholder="URL de l'image ou uploader depuis votre PC"
+              />
 
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -408,24 +406,28 @@ const Admin = () => {
                     <Plus className="w-4 h-4" />
                   </Button>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-4">
                   {newProduct.images.map((image, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <Input
+                    <div key={index} className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">Image {index + 1}</span>
+                        {newProduct.images.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeNewProductImage(index)}
+                          >
+                            ×
+                          </Button>
+                        )}
+                      </div>
+                      <ImageUploader
+                        label=""
                         value={image}
-                        onChange={(e) => handleNewProductImageChange(index, e.target.value)}
-                        placeholder="URL de l'image"
+                        onChange={(value) => handleNewProductImageChange(index, value)}
+                        placeholder="URL de l'image ou uploader depuis votre PC"
                       />
-                      {newProduct.images.length > 1 && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeNewProductImage(index)}
-                        >
-                          ×
-                        </Button>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -453,22 +455,12 @@ const Admin = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <Label htmlFor="hero-image">URL de l'image</Label>
-                <Input
-                  id="hero-image"
-                  placeholder="https://example.com/image.jpg"
-                  value={heroImage}
-                  onChange={(e) => setHeroImage(e.target.value)}
-                />
-                {heroImage && (
-                  <img
-                    src={heroImage}
-                    alt="Aperçu bannière"
-                    className="w-full h-48 object-cover rounded-lg"
-                  />
-                )}
-              </div>
+              <ImageUploader
+                label="Image de bannière"
+                value={heroImage}
+                onChange={setHeroImage}
+                placeholder="URL de l'image ou uploader depuis votre PC"
+              />
             </CardContent>
           </Card>
 

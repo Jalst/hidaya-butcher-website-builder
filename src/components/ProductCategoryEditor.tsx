@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ProductCategory } from '@/contexts/ProductsContext';
 import { Trash2, Plus, Minus } from 'lucide-react';
+import ImageUploader from '@/components/ImageUploader';
 
 interface ProductCategoryEditorProps {
   category: ProductCategory;
@@ -72,22 +72,12 @@ const ProductCategoryEditor = ({ category, onUpdate, onDelete }: ProductCategory
           />
         </div>
 
-        <div>
-          <Label htmlFor={`image-${category.id}`}>URL de l'image</Label>
-          <Input
-            id={`image-${category.id}`}
-            value={category.image}
-            onChange={(e) => onUpdate(category.id, { image: e.target.value })}
-            placeholder="https://example.com/image.jpg"
-          />
-          {category.image && (
-            <img
-              src={category.image}
-              alt={category.title}
-              className="w-full h-32 object-cover rounded-lg mt-2"
-            />
-          )}
-        </div>
+        <ImageUploader
+          label="Image de la catégorie"
+          value={category.image}
+          onChange={(value) => onUpdate(category.id, { image: value })}
+          placeholder="URL de l'image ou uploader depuis votre PC"
+        />
 
         <div>
           <div className="flex items-center justify-between mb-2">
