@@ -64,8 +64,8 @@ const CategoryDetail = () => {
       {/* Contenu principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Produits spécifiques */}
-        {category.products && category.products.length > 0 && (
-          <div className="mb-12">
+        {category.products && category.products.length > 0 ? (
+          <div>
             <h2 className="font-playfair text-3xl font-bold text-butchery-red mb-8">
               Produits Disponibles
             </h2>
@@ -108,22 +108,14 @@ const CategoryDetail = () => {
               ))}
             </div>
           </div>
-        )}
-
-        {/* Articles généraux */}
-        {category.items && category.items.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="font-playfair text-2xl font-bold text-butchery-red mb-6">
-              Articles Disponibles
+        ) : (
+          <div className="text-center py-12">
+            <h2 className="font-playfair text-2xl font-bold text-gray-600 mb-4">
+              Aucun produit disponible
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {category.items.map((item, index) => (
-                <div key={index} className="flex items-start">
-                  <span className="w-2 h-2 bg-butchery-gold rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span className="text-gray-700">{item}</span>
-                </div>
-              ))}
-            </div>
+            <p className="text-gray-500">
+              Les produits de cette catégorie seront bientôt disponibles.
+            </p>
           </div>
         )}
 
