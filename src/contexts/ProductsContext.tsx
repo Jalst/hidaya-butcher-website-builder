@@ -94,11 +94,23 @@ const defaultCategories: ProductCategory[] = [
 
 const STORAGE_KEY = 'boucherie-products';
 
+// Fonction utilitaire pour normaliser les catégories
+const normalizeCategories = (categories: any[]): ProductCategory[] => {
+  return categories.map(cat => ({
+    ...cat,
+    products: Array.isArray(cat.products) ? cat.products : []
+  }));
+};
+
 export const ProductsProvider = ({ children }: { children: ReactNode }) => {
   const [categories, setCategories] = useState<ProductCategory[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : defaultCategories;
+      if (saved) {
+        const parsedCategories = JSON.parse(saved);
+        return normalizeCategories(parsedCategories);
+      }
+      return defaultCategories;
     } catch {
       return defaultCategories;
     }
@@ -121,7 +133,7 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
 
   const addCategory = (newCategory: Omit<ProductCategory, 'id'>) => {
     const id = Date.now().toString();
-    setCategories(prev => [...prev, { ...newCategory, id, products: [] }]);
+    setCategories(prev => [...prev, { ...newCategory, id, products: newCategory.products || [] }]);
   };
 
   const deleteCategory = (id: string) => {
@@ -133,7 +145,7 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
     setCategories(prev => 
       prev.map(cat => 
         cat.id === categoryId 
-          ? { ...cat, products: [...cat.products, { ...newProduct, id, categoryId }] }
+          ? { ...cat, products: [...(cat.products || []), { ...newProduct, id, categoryId }] }
           : cat
       )
     );
@@ -143,7 +155,7 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
     setCategories(prev => 
       prev.map(cat => ({
         ...cat,
-        products: cat.products.map(product => 
+        products: (cat.products || []).map(product => 
           product.id === productId ? { ...product, ...updatedProduct } : product
         )
       }))
@@ -154,14 +166,15 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
     setCategories(prev => 
       prev.map(cat => ({
         ...cat,
-        products: cat.products.filter(product => product.id !== productId)
+        products: (cat.products || []).filter(product => product.id !== productId)
       }))
     );
   };
 
   const getProductById = (productId: string): Product | undefined => {
     for (const category of categories) {
-      const product = category.products.find(p => p.id === productId);
+      const products = category.products || [];
+      const product = products.find(p => p.id === productId);
       if (product) return product;
     }
     return undefined;
