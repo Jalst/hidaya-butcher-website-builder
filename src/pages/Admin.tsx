@@ -67,14 +67,6 @@ const Admin = () => {
     categoryId: ''
   });
 
-  const handleSave = () => {
-    console.log('Image de bannière sauvegardée:', heroImage);
-    toast({
-      title: "Succès",
-      description: "Les modifications ont été sauvegardées avec succès!",
-    });
-  };
-
   const handleSaveHero = () => {
     updateHeroSection(heroData);
     toast({
