@@ -312,7 +312,7 @@ const Admin = () => {
                 <Label htmlFor="product-category">Catégorie</Label>
                 <Select value={newProduct.categoryId} onValueChange={(value) => setNewProduct(prev => ({ ...prev, categoryId: value }))}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner une catégorie" />
+                    <SelectValue placeholder={categories && categories.length > 0 ? "Sélectionner une catégorie" : "Aucune catégorie disponible"} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories && categories.length > 0 ? (
@@ -321,9 +321,7 @@ const Admin = () => {
                           {category.title}
                         </SelectItem>
                       ))
-                    ) : (
-                      <SelectItem value="" disabled>Aucune catégorie disponible</SelectItem>
-                    )}
+                    ) : null}
                   </SelectContent>
                 </Select>
               </div>
