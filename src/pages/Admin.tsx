@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, Save, ArrowLeft, Plus } from 'lucide-react';
+import { Upload, Save, ArrowLeft, Plus, Phone, Clock, Image } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useProducts, ProductCategory } from '@/contexts/ProductsContext';
 import ProductCategoryEditor from '@/components/ProductCategoryEditor';
@@ -16,9 +16,26 @@ import DataManager from '@/components/DataManager';
 
 const Admin = () => {
   const navigate = useNavigate();
-  const { categories, updateCategory, addCategory, deleteCategory, addProduct, updateProduct, deleteProduct } = useProducts();
+  const { categories, siteData, updateCategory, addCategory, deleteCategory, addProduct, updateProduct, deleteProduct, updateHeroSection, updateContact } = useProducts();
   const { toast } = useToast();
-  const [heroImage, setHeroImage] = useState('');
+
+  // États locaux pour les formulaires
+  const [heroData, setHeroData] = useState({
+    title: siteData?.heroSection.title || '',
+    subtitle: siteData?.heroSection.subtitle || '',
+    backgroundImage: siteData?.heroSection.backgroundImage || ''
+  });
+
+  const [contactData, setContactData] = useState({
+    phone: siteData?.contact.phone || '',
+    address: siteData?.contact.address || '',
+    email: siteData?.contact.email || '',
+    hours: {
+      weekdays: siteData?.contact.hours.weekdays || '',
+      saturday: siteData?.contact.hours.saturday || '',
+      sunday: siteData?.contact.hours.sunday || ''
+    }
+  });
 
   // Vérification de sécurité pour éviter l'erreur de map
   if (!categories) {
@@ -55,6 +72,22 @@ const Admin = () => {
     toast({
       title: "Succès",
       description: "Les modifications ont été sauvegardées avec succès!",
+    });
+  };
+
+  const handleSaveHero = () => {
+    updateHeroSection(heroData);
+    toast({
+      title: "Succès",
+      description: "Les modifications de la bannière ont été sauvegardées!",
+    });
+  };
+
+  const handleSaveContact = () => {
+    updateContact(contactData);
+    toast({
+      title: "Succès",
+      description: "Les informations de contact ont été sauvegardées!",
     });
   };
 
@@ -175,6 +208,161 @@ const Admin = () => {
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Gestion des Données</h2>
           <DataManager />
+        </div>
+
+        {/* Section gestion de la bannière */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Gestion de la Bannière d'Accueil</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Image className="w-5 h-5" />
+                Bannière d'accueil
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="hero-title">Titre principal</Label>
+                <Input
+                  id="hero-title"
+                  value={heroData.title}
+                  onChange={(e) => setHeroData(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Titre de la bannière"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="hero-subtitle">Sous-titre</Label>
+                <Textarea
+                  id="hero-subtitle"
+                  value={heroData.subtitle}
+                  onChange={(e) => setHeroData(prev => ({ ...prev, subtitle: e.target.value }))}
+                  placeholder="Sous-titre de la bannière"
+                  rows={2}
+                />
+              </div>
+
+              <ImageUploader
+                label="Image de fond"
+                value={heroData.backgroundImage}
+                onChange={(value) => setHeroData(prev => ({ ...prev, backgroundImage: value }))}
+                placeholder="URL de l'image de fond ou uploader depuis votre PC"
+              />
+
+              <Button
+                onClick={handleSaveHero}
+                className="w-full bg-butchery-red hover:bg-red-800 text-white"
+              >
+                Sauvegarder la bannière
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Section gestion des informations de contact */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Informations de Contact</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Phone className="w-5 h-5" />
+                  Contact
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="contact-phone">Numéro de téléphone</Label>
+                  <Input
+                    id="contact-phone"
+                    value={contactData.phone}
+                    onChange={(e) => setContactData(prev => ({ ...prev, phone: e.target.value }))}
+                    placeholder="05 61 86 54 42"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="contact-address">Adresse</Label>
+                  <Textarea
+                    id="contact-address"
+                    value={contactData.address}
+                    onChange={(e) => setContactData(prev => ({ ...prev, address: e.target.value }))}
+                    placeholder="Adresse complète"
+                    rows={2}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="contact-email">Email</Label>
+                  <Input
+                    id="contact-email"
+                    type="email"
+                    value={contactData.email}
+                    onChange={(e) => setContactData(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="contact@boucherie-hidaya.fr"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="w-5 h-5" />
+                  Horaires d'ouverture
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="hours-weekdays">Lundi à Vendredi</Label>
+                  <Input
+                    id="hours-weekdays"
+                    value={contactData.hours.weekdays}
+                    onChange={(e) => setContactData(prev => ({ 
+                      ...prev, 
+                      hours: { ...prev.hours, weekdays: e.target.value }
+                    }))}
+                    placeholder="8h30-13h / 15h-19h30"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="hours-saturday">Samedi</Label>
+                  <Input
+                    id="hours-saturday"
+                    value={contactData.hours.saturday}
+                    onChange={(e) => setContactData(prev => ({ 
+                      ...prev, 
+                      hours: { ...prev.hours, saturday: e.target.value }
+                    }))}
+                    placeholder="8h30-13h / 15h-19h30"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="hours-sunday">Dimanche</Label>
+                  <Input
+                    id="hours-sunday"
+                    value={contactData.hours.sunday}
+                    onChange={(e) => setContactData(prev => ({ 
+                      ...prev, 
+                      hours: { ...prev.hours, sunday: e.target.value }
+                    }))}
+                    placeholder="8h30-13h"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="mt-6">
+            <Button
+              onClick={handleSaveContact}
+              className="w-full bg-butchery-red hover:bg-red-800 text-white"
+            >
+              Sauvegarder les informations de contact
+            </Button>
+          </div>
         </div>
 
         {/* Section gestion des catégories */}

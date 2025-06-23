@@ -55,6 +55,8 @@ interface ProductsContextType {
   updateProduct: (productId: string, updates: Partial<Product>) => void;
   deleteProduct: (productId: string) => void;
   getProductById: (productId: string) => Product | undefined;
+  updateHeroSection: (updates: Partial<SiteData['heroSection']>) => void;
+  updateContact: (updates: Partial<SiteData['contact']>) => void;
   exportData: () => SiteData;
   importData: (data: SiteData) => void;
 }
@@ -105,13 +107,13 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
             categories: [],
             services: [],
             contact: {
-              address: "123 Rue de la Boucherie, 75001 Paris",
-              phone: "01 23 45 67 89",
-              email: "contact@boucherie-artisanale.fr",
+              address: "36 Avenue Georges Pompidou, 31270 Cugnaux, France",
+              phone: "05 61 86 54 42",
+              email: "contact@boucherie-hidaya.fr",
               hours: {
-                weekdays: "8h00 - 19h30",
-                saturday: "8h00 - 19h00",
-                sunday: "Fermé"
+                weekdays: "8h30-13h / 15h-19h30",
+                saturday: "8h30-13h / 15h-19h30",
+                sunday: "8h30-13h"
               }
             }
           };
@@ -210,6 +212,26 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
     saveData(newData);
   };
 
+  const updateHeroSection = (updates: Partial<SiteData['heroSection']>) => {
+    if (!siteData) return;
+    
+    const newData = {
+      ...siteData,
+      heroSection: { ...siteData.heroSection, ...updates }
+    };
+    saveData(newData);
+  };
+
+  const updateContact = (updates: Partial<SiteData['contact']>) => {
+    if (!siteData) return;
+    
+    const newData = {
+      ...siteData,
+      contact: { ...siteData.contact, ...updates }
+    };
+    saveData(newData);
+  };
+
   const exportData = (): SiteData => {
     if (!siteData) throw new Error('Aucune donnée à exporter');
     return siteData;
@@ -242,6 +264,8 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
       updateProduct,
       deleteProduct,
       getProductById,
+      updateHeroSection,
+      updateContact,
       exportData,
       importData
     }}>

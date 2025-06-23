@@ -1,8 +1,11 @@
 
 import React from 'react';
 import { ArrowDown } from 'lucide-react';
+import { useProducts } from '@/contexts/ProductsContext';
 
 const HeroSection = () => {
+  const { siteData } = useProducts();
+
   const scrollToProducts = () => {
     const element = document.getElementById('produits');
     if (element) {
@@ -10,12 +13,15 @@ const HeroSection = () => {
     }
   };
 
+  const heroSection = siteData?.heroSection;
+  const contact = siteData?.contact;
+
   return (
     <section id="accueil" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+          src={heroSection?.backgroundImage || "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"}
           alt="Vitrine de boucherie avec viandes fraîches"
           className="w-full h-full object-cover"
         />
@@ -26,12 +32,12 @@ const HeroSection = () => {
       <div className="relative z-10 text-center text-white section-padding max-w-4xl mx-auto pt-24 sm:pt-20 md:pt-0">
         <div className="animate-fade-in">
           <h1 className="font-playfair text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
-            Bienvenue à la
+            {heroSection?.title || "Bienvenue à la"}
             <span className="block text-butchery-gold">Boucherie Hidaya</span>
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 leading-relaxed opacity-90 px-2 sm:px-0">
-            Votre boucherie halal de confiance à Cugnaux.<br />
+            {heroSection?.subtitle || "Votre boucherie halal de confiance à Cugnaux."}<br />
             <span className="text-butchery-gold font-medium">Produits frais, qualité garantie, service chaleureux.</span>
           </p>
 
@@ -44,7 +50,7 @@ const HeroSection = () => {
             </button>
             
             <a
-              href="tel:+33561865442"
+              href={`tel:${contact?.phone?.replace(/\s/g, '') || '+33561865442'}`}
               className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-butchery-red px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 transform hover:scale-105"
             >
               Nous contacter

@@ -1,8 +1,12 @@
 
 import React from 'react';
 import { MapPin, Phone, Clock } from 'lucide-react';
+import { useProducts } from '@/contexts/ProductsContext';
 
 const Footer = () => {
+  const { siteData } = useProducts();
+  const contact = siteData?.contact;
+
   return (
     <footer className="bg-butchery-darkGray text-white py-12">
       <div className="section-padding">
@@ -41,18 +45,17 @@ const Footer = () => {
                 <MapPin className="w-5 h-5 text-butchery-gold mt-1" />
                 <div>
                   <p className="text-gray-300">
-                    36 Avenue Georges Pompidou<br />
-                    31270 Cugnaux, France
+                    {contact?.address || "36 Avenue Georges Pompidou, 31270 Cugnaux, France"}
                   </p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-butchery-gold" />
                 <a 
-                  href="tel:+33561865442"
+                  href={`tel:${contact?.phone?.replace(/\s/g, '') || '+33561865442'}`}
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  05 61 86 54 42
+                  {contact?.phone || "05 61 86 54 42"}
                 </a>
               </div>
             </div>
@@ -70,11 +73,11 @@ const Footer = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-300">Mar-Sam</span>
-                <span className="text-white">8h30-13h / 15h-19h30</span>
+                <span className="text-white">{contact?.hours.weekdays || "8h30-13h / 15h-19h30"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-300">Dimanche</span>
-                <span className="text-white">8h30-13h</span>
+                <span className="text-white">{contact?.hours.sunday || "8h30-13h"}</span>
               </div>
               <p className="text-sm text-gray-400 mt-2">
                 * Fermé le lundi après-midi
