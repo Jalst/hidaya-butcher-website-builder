@@ -627,36 +627,6 @@ const Admin = () => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Section gestion de la photo de bannière */}
-        <div className="grid gap-6">
-          <h2 className="text-2xl font-bold text-gray-900">Gestion de la photo de bannière</h2>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Upload className="w-5 h-5" />
-                Photo de bannière (Accueil)
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ImageUploader
-                label="Image de bannière"
-                value={heroImage}
-                onChange={setHeroImage}
-                placeholder="URL de l'image ou uploader depuis votre PC"
-              />
-            </CardContent>
-          </Card>
-
-          <Button
-            onClick={handleSave}
-            className="w-full bg-butchery-red hover:bg-red-800 text-white flex items-center gap-2"
-          >
-            <Save className="w-4 h-4" />
-            Sauvegarder les modifications
-          </Button>
-        </div>
       </div>
     </div>
   );
