@@ -86,7 +86,7 @@ const Footer = () => {
         <div className="border-t border-gray-600 mt-8 pt-8 text-center">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-300 text-sm mb-4 md:mb-0">
-              © 2024 Boucherie Hidaya. Tous droits réservés.
+              © 2025 Boucherie Hidaya. Tous droits réservés.
             </p>
             <div className="flex space-x-6 text-sm">
               <span className="text-butchery-gold font-medium">Certification Halal</span>
