@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export interface Product {
@@ -55,6 +54,7 @@ interface ProductsContextType {
   addProduct: (categoryId: string, product: Omit<Product, 'id'>) => void;
   updateProduct: (productId: string, updates: Partial<Product>) => void;
   deleteProduct: (productId: string) => void;
+  getProductById: (productId: string) => Product | undefined;
   exportData: () => SiteData;
   importData: (data: SiteData) => void;
 }
@@ -219,6 +219,17 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
     saveData(data);
   };
 
+  const getProductById = (productId: string): Product | undefined => {
+    if (!siteData) return undefined;
+    
+    for (const category of siteData.categories) {
+      const product = category.products.find(p => p.id === productId);
+      if (product) return product;
+    }
+    
+    return undefined;
+  };
+
   return (
     <ProductsContext.Provider value={{
       categories: siteData?.categories || [],
@@ -230,6 +241,7 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
       addProduct,
       updateProduct,
       deleteProduct,
+      getProductById,
       exportData,
       importData
     }}>
