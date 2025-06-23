@@ -32,12 +32,12 @@ const HeroSection = () => {
       <div className="relative z-10 text-center text-white section-padding max-w-4xl mx-auto pt-24 sm:pt-20 md:pt-0">
         <div className="animate-fade-in">
           <h1 className="font-playfair text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
-            {heroSection?.title || "Bienvenue à la"}
+            Bienvenue à la
             <span className="block text-butchery-gold">Boucherie Hidaya</span>
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 leading-relaxed opacity-90 px-2 sm:px-0">
-            {heroSection?.subtitle || "Votre boucherie halal de confiance à Cugnaux."}<br />
+            Votre boucherie halal de confiance à Cugnaux.<br />
             <span className="text-butchery-gold font-medium">Produits frais, qualité garantie, service chaleureux.</span>
           </p>
 

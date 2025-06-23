@@ -21,8 +21,6 @@ const Admin = () => {
 
   // États locaux pour les formulaires
   const [heroData, setHeroData] = useState({
-    title: siteData?.heroSection.title || '',
-    subtitle: siteData?.heroSection.subtitle || '',
     backgroundImage: siteData?.heroSection.backgroundImage || ''
   });
 
@@ -71,7 +69,7 @@ const Admin = () => {
     updateHeroSection(heroData);
     toast({
       title: "Succès",
-      description: "Les modifications de la bannière ont été sauvegardées!",
+      description: "L'image de fond a été sauvegardée!",
     });
   };
 
@@ -202,38 +200,17 @@ const Admin = () => {
           <DataManager />
         </div>
 
-        {/* Section gestion de la bannière */}
+        {/* Section gestion de l'image de fond uniquement */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Gestion de la Bannière d'Accueil</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Image de Fond de la Bannière</h2>
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Image className="w-5 h-5" />
-                Bannière d'accueil
+                Image de fond
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="hero-title">Titre principal</Label>
-                <Input
-                  id="hero-title"
-                  value={heroData.title}
-                  onChange={(e) => setHeroData(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder="Titre de la bannière"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="hero-subtitle">Sous-titre</Label>
-                <Textarea
-                  id="hero-subtitle"
-                  value={heroData.subtitle}
-                  onChange={(e) => setHeroData(prev => ({ ...prev, subtitle: e.target.value }))}
-                  placeholder="Sous-titre de la bannière"
-                  rows={2}
-                />
-              </div>
-
               <ImageUploader
                 label="Image de fond"
                 value={heroData.backgroundImage}
@@ -245,7 +222,7 @@ const Admin = () => {
                 onClick={handleSaveHero}
                 className="w-full bg-butchery-red hover:bg-red-800 text-white"
               >
-                Sauvegarder la bannière
+                Sauvegarder l'image de fond
               </Button>
             </CardContent>
           </Card>
@@ -359,7 +336,7 @@ const Admin = () => {
 
         {/* Section gestion des catégories */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Gestion des Catégories</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Gestion des Catégories (Nos Produits)</h2>
           
           {/* Catégories existantes avec vérification de sécurité */}
           {categories && categories.length > 0 ? (
