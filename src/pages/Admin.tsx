@@ -12,6 +12,7 @@ import ProductEditor from '@/components/ProductEditor';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ImageUploader from '@/components/ImageUploader';
+import DataManager from '@/components/DataManager';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -168,6 +169,12 @@ const Admin = () => {
           <h1 className="text-3xl font-bold text-gray-900">
             Administration - Gestion du contenu
           </h1>
+        </div>
+
+        {/* Section Export/Import */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Gestion des Données</h2>
+          <DataManager />
         </div>
 
         {/* Section gestion des catégories */}

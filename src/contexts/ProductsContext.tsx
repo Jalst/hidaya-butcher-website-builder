@@ -11,7 +11,6 @@ export interface Product {
   origin: string;
   weight: string;
   pricePerKg: string;
-  categoryId: string;
 }
 
 export interface ProductCategory {
@@ -23,15 +22,41 @@ export interface ProductCategory {
   products: Product[];
 }
 
+export interface SiteData {
+  heroSection: {
+    title: string;
+    subtitle: string;
+    backgroundImage: string;
+  };
+  categories: ProductCategory[];
+  services: Array<{
+    title: string;
+    description: string;
+  }>;
+  contact: {
+    address: string;
+    phone: string;
+    email: string;
+    hours: {
+      weekdays: string;
+      saturday: string;
+      sunday: string;
+    };
+  };
+}
+
 interface ProductsContextType {
   categories: ProductCategory[];
-  updateCategory: (id: string, category: Partial<ProductCategory>) => void;
+  siteData: SiteData | null;
+  loading: boolean;
+  updateCategory: (id: string, updates: Partial<ProductCategory>) => void;
   addCategory: (category: Omit<ProductCategory, 'id'>) => void;
   deleteCategory: (id: string) => void;
-  addProduct: (categoryId: string, product: Omit<Product, 'id' | 'categoryId'>) => void;
-  updateProduct: (productId: string, product: Partial<Product>) => void;
+  addProduct: (categoryId: string, product: Omit<Product, 'id'>) => void;
+  updateProduct: (productId: string, updates: Partial<Product>) => void;
   deleteProduct: (productId: string) => void;
-  getProductById: (productId: string) => Product | undefined;
+  exportData: () => SiteData;
+  importData: (data: SiteData) => void;
 }
 
 const ProductsContext = createContext<ProductsContextType | undefined>(undefined);
@@ -44,152 +69,169 @@ export const useProducts = () => {
   return context;
 };
 
-const defaultCategories: ProductCategory[] = [
-  {
-    id: '1',
-    title: "Viandes Rouges",
-    description: "Bœuf et agneau de première qualité, sélectionnés avec soin auprès de nos fournisseurs certifiés halal.",
-    image: "https://images.unsplash.com/photo-1493962853295-0fd70327578a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    items: ["Bœuf : steaks, rôtis, viande hachée", "Agneau : côtelettes, gigot, épaule", "Préparations spéciales sur demande"],
-    products: [
-      {
-        id: 'beef-1',
-        name: 'Côte de Bœuf Premium',
-        description: 'Côte de bœuf de qualité exceptionnelle',
-        detailedDescription: 'Notre côte de bœuf premium provient d\'élevages certifiés halal. Maturation de 21 jours pour une tendreté optimale. Parfaite pour vos repas de fête.',
-        images: ['https://images.unsplash.com/photo-1493962853295-0fd70327578a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80'],
-        type: 'Viande rouge',
-        origin: 'France',
-        weight: '1.5-2kg',
-        pricePerKg: '35€/kg',
-        categoryId: '1'
-      }
-    ]
-  },
-  {
-    id: '2',
-    title: "Volailles",
-    description: "Poulets et dindes élevés dans le respect des traditions, pour une viande tendre et savoureuse.",
-    image: "https://images.unsplash.com/photo-1465379944081-7f47de8d74ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    items: ["Poulets fermiers entiers et découpés", "Dindes pour vos occasions spéciales", "Abats frais disponibles"],
-    products: []
-  },
-  {
-    id: '3',
-    title: "Plats Préparés",
-    description: "Délicieux plats traditionnels préparés avec amour dans notre cuisine, prêts à réchauffer.",
-    image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    items: ["Tajines et couscous maison", "Grillades marinées", "Spécialités du Ramadan"],
-    products: []
-  },
-  {
-    id: '4',
-    title: "Épicerie Orientale",
-    description: "Une sélection d'épices, condiments et produits orientaux pour accompagner vos plats.",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    items: ["Épices et mélanges traditionnels", "Conserves et produits d'importation", "Thés et pâtisseries orientales"],
-    products: []
-  }
-];
-
-const STORAGE_KEY = 'boucherie-products';
-
-// Fonction utilitaire pour normaliser les catégories
-const normalizeCategories = (categories: any[]): ProductCategory[] => {
-  return categories.map(cat => ({
-    ...cat,
-    products: Array.isArray(cat.products) ? cat.products : []
-  }));
-};
-
 export const ProductsProvider = ({ children }: { children: ReactNode }) => {
-  const [categories, setCategories] = useState<ProductCategory[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsedCategories = JSON.parse(saved);
-        return normalizeCategories(parsedCategories);
-      }
-      return defaultCategories;
-    } catch {
-      return defaultCategories;
-    }
-  });
+  const [siteData, setSiteData] = useState<SiteData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Sauvegarder dans localStorage à chaque changement
+  // Chargement initial des données
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(categories));
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde:', error);
-    }
-  }, [categories]);
+    const loadData = async () => {
+      try {
+        // Essayer de charger depuis le fichier JSON public
+        const response = await fetch('/data.json');
+        if (response.ok) {
+          const data = await response.json();
+          setSiteData(data);
+          // Sauvegarder dans localStorage comme fallback
+          localStorage.setItem('siteData', JSON.stringify(data));
+        } else {
+          throw new Error('Fichier data.json non trouvé');
+        }
+      } catch (error) {
+        console.log('Chargement depuis localStorage...');
+        // Fallback vers localStorage
+        const savedData = localStorage.getItem('siteData');
+        if (savedData) {
+          setSiteData(JSON.parse(savedData));
+        } else {
+          // Données par défaut si rien n'est trouvé
+          console.log('Utilisation des données par défaut');
+          const defaultData: SiteData = {
+            heroSection: {
+              title: "Boucherie Artisanale",
+              subtitle: "Viandes fraîches et de qualité",
+              backgroundImage: "/lovable-uploads/6e143375-4021-47b2-971f-6a9b56b26d8f.png"
+            },
+            categories: [],
+            services: [],
+            contact: {
+              address: "123 Rue de la Boucherie, 75001 Paris",
+              phone: "01 23 45 67 89",
+              email: "contact@boucherie-artisanale.fr",
+              hours: {
+                weekdays: "8h00 - 19h30",
+                saturday: "8h00 - 19h00",
+                sunday: "Fermé"
+              }
+            }
+          };
+          setSiteData(defaultData);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const updateCategory = (id: string, updatedCategory: Partial<ProductCategory>) => {
-    setCategories(prev => 
-      prev.map(cat => cat.id === id ? { ...cat, ...updatedCategory } : cat)
-    );
+    loadData();
+  }, []);
+
+  const saveData = (data: SiteData) => {
+    setSiteData(data);
+    localStorage.setItem('siteData', JSON.stringify(data));
   };
 
-  const addCategory = (newCategory: Omit<ProductCategory, 'id'>) => {
-    const id = Date.now().toString();
-    setCategories(prev => [...prev, { ...newCategory, id, products: newCategory.products || [] }]);
+  const updateCategory = (id: string, updates: Partial<ProductCategory>) => {
+    if (!siteData) return;
+    
+    const updatedCategories = siteData.categories.map(cat =>
+      cat.id === id ? { ...cat, ...updates } : cat
+    );
+    
+    const newData = { ...siteData, categories: updatedCategories };
+    saveData(newData);
+  };
+
+  const addCategory = (category: Omit<ProductCategory, 'id'>) => {
+    if (!siteData) return;
+    
+    const newCategory: ProductCategory = {
+      ...category,
+      id: `category-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    };
+    
+    const newData = {
+      ...siteData,
+      categories: [...siteData.categories, newCategory]
+    };
+    saveData(newData);
   };
 
   const deleteCategory = (id: string) => {
-    setCategories(prev => prev.filter(cat => cat.id !== id));
+    if (!siteData) return;
+    
+    const newData = {
+      ...siteData,
+      categories: siteData.categories.filter(cat => cat.id !== id)
+    };
+    saveData(newData);
   };
 
-  const addProduct = (categoryId: string, newProduct: Omit<Product, 'id' | 'categoryId'>) => {
-    const id = Date.now().toString();
-    setCategories(prev => 
-      prev.map(cat => 
-        cat.id === categoryId 
-          ? { ...cat, products: [...(cat.products || []), { ...newProduct, id, categoryId }] }
-          : cat
+  const addProduct = (categoryId: string, product: Omit<Product, 'id'>) => {
+    if (!siteData) return;
+    
+    const newProduct: Product = {
+      ...product,
+      id: `product-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    };
+    
+    const updatedCategories = siteData.categories.map(cat =>
+      cat.id === categoryId
+        ? { ...cat, products: [...cat.products, newProduct] }
+        : cat
+    );
+    
+    const newData = { ...siteData, categories: updatedCategories };
+    saveData(newData);
+  };
+
+  const updateProduct = (productId: string, updates: Partial<Product>) => {
+    if (!siteData) return;
+    
+    const updatedCategories = siteData.categories.map(cat => ({
+      ...cat,
+      products: cat.products.map(product =>
+        product.id === productId ? { ...product, ...updates } : product
       )
-    );
-  };
-
-  const updateProduct = (productId: string, updatedProduct: Partial<Product>) => {
-    setCategories(prev => 
-      prev.map(cat => ({
-        ...cat,
-        products: (cat.products || []).map(product => 
-          product.id === productId ? { ...product, ...updatedProduct } : product
-        )
-      }))
-    );
+    }));
+    
+    const newData = { ...siteData, categories: updatedCategories };
+    saveData(newData);
   };
 
   const deleteProduct = (productId: string) => {
-    setCategories(prev => 
-      prev.map(cat => ({
-        ...cat,
-        products: (cat.products || []).filter(product => product.id !== productId)
-      }))
-    );
+    if (!siteData) return;
+    
+    const updatedCategories = siteData.categories.map(cat => ({
+      ...cat,
+      products: cat.products.filter(product => product.id !== productId)
+    }));
+    
+    const newData = { ...siteData, categories: updatedCategories };
+    saveData(newData);
   };
 
-  const getProductById = (productId: string): Product | undefined => {
-    for (const category of categories) {
-      const products = category.products || [];
-      const product = products.find(p => p.id === productId);
-      if (product) return product;
-    }
-    return undefined;
+  const exportData = (): SiteData => {
+    if (!siteData) throw new Error('Aucune donnée à exporter');
+    return siteData;
+  };
+
+  const importData = (data: SiteData) => {
+    saveData(data);
   };
 
   return (
     <ProductsContext.Provider value={{
-      categories,
+      categories: siteData?.categories || [],
+      siteData,
+      loading,
       updateCategory,
       addCategory,
       deleteCategory,
       addProduct,
       updateProduct,
       deleteProduct,
-      getProductById
+      exportData,
+      importData
     }}>
       {children}
     </ProductsContext.Provider>
