@@ -48,6 +48,7 @@ interface ProductsContextType {
   categories: ProductCategory[];
   siteData: SiteData | null;
   loading: boolean;
+  hasUnsavedChanges: boolean;
   updateCategory: (id: string, updates: Partial<ProductCategory>) => void;
   addCategory: (category: Omit<ProductCategory, 'id'>) => void;
   deleteCategory: (id: string) => void;
@@ -59,6 +60,8 @@ interface ProductsContextType {
   updateContact: (updates: Partial<SiteData['contact']>) => void;
   exportData: () => SiteData;
   importData: (data: SiteData) => void;
+  saveAllChanges: () => void;
+  resetUnsavedChanges: () => void;
 }
 
 const ProductsContext = createContext<ProductsContextType | undefined>(undefined);
@@ -74,6 +77,7 @@ export const useProducts = () => {
 export const ProductsProvider = ({ children }: { children: ReactNode }) => {
   const [siteData, setSiteData] = useState<SiteData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // Chargement initial des données
   useEffect(() => {
@@ -127,9 +131,22 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
     loadData();
   }, []);
 
-  const saveData = (data: SiteData) => {
+  const saveData = (data: SiteData, markAsUnsaved = true) => {
     setSiteData(data);
-    localStorage.setItem('siteData', JSON.stringify(data));
+    if (markAsUnsaved) {
+      setHasUnsavedChanges(true);
+    }
+  };
+
+  const saveAllChanges = () => {
+    if (siteData) {
+      localStorage.setItem('siteData', JSON.stringify(siteData));
+      setHasUnsavedChanges(false);
+    }
+  };
+
+  const resetUnsavedChanges = () => {
+    setHasUnsavedChanges(false);
   };
 
   const updateCategory = (id: string, updates: Partial<ProductCategory>) => {
@@ -238,7 +255,8 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const importData = (data: SiteData) => {
-    saveData(data);
+    saveData(data, false);
+    localStorage.setItem('siteData', JSON.stringify(data));
   };
 
   const getProductById = (productId: string): Product | undefined => {
@@ -257,6 +275,7 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
       categories: siteData?.categories || [],
       siteData,
       loading,
+      hasUnsavedChanges,
       updateCategory,
       addCategory,
       deleteCategory,
@@ -267,7 +286,9 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
       updateHeroSection,
       updateContact,
       exportData,
-      importData
+      importData,
+      saveAllChanges,
+      resetUnsavedChanges
     }}>
       {children}
     </ProductsContext.Provider>

@@ -6,9 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ProductCategory } from '@/contexts/ProductsContext';
-import { Trash2, Save } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import ImageUploader from '@/components/ImageUploader';
-import { useToast } from '@/hooks/use-toast';
 
 interface ProductCategoryEditorProps {
   category: ProductCategory;
@@ -17,15 +16,6 @@ interface ProductCategoryEditorProps {
 }
 
 const ProductCategoryEditor = ({ category, onUpdate, onDelete }: ProductCategoryEditorProps) => {
-  const { toast } = useToast();
-
-  const handleSave = () => {
-    toast({
-      title: "Succès",
-      description: "Les modifications de la catégorie ont été sauvegardées!",
-    });
-  };
-
   return (
     <Card className="mb-6">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -68,14 +58,6 @@ const ProductCategoryEditor = ({ category, onUpdate, onDelete }: ProductCategory
           onChange={(value) => onUpdate(category.id, { image: value })}
           placeholder="URL de l'image ou uploader depuis votre PC"
         />
-
-        <Button
-          onClick={handleSave}
-          className="w-full bg-butchery-red hover:bg-red-800 text-white"
-        >
-          <Save className="w-4 h-4 mr-2" />
-          Sauvegarder la catégorie
-        </Button>
       </CardContent>
     </Card>
   );

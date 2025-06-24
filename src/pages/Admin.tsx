@@ -4,20 +4,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, Save, ArrowLeft, Plus, Phone, Clock, Image } from 'lucide-react';
+import { ArrowLeft, Plus, Phone, Clock, Image } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useProducts, ProductCategory } from '@/contexts/ProductsContext';
 import ProductCategoryEditor from '@/components/ProductCategoryEditor';
 import ProductEditor from '@/components/ProductEditor';
-import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ImageUploader from '@/components/ImageUploader';
 import DataManager from '@/components/DataManager';
+import GlobalSaveButton from '@/components/GlobalSaveButton';
 
 const Admin = () => {
   const navigate = useNavigate();
   const { categories, siteData, updateCategory, addCategory, deleteCategory, addProduct, updateProduct, deleteProduct, updateHeroSection, updateContact } = useProducts();
-  const { toast } = useToast();
 
   // États locaux pour les formulaires
   const [heroData, setHeroData] = useState({
@@ -64,20 +63,25 @@ const Admin = () => {
     categoryId: ''
   });
 
-  const handleSaveHero = () => {
-    updateHeroSection(heroData);
-    toast({
-      title: "Succès",
-      description: "L'image de fond a été sauvegardée!",
-    });
+  const handleHeroImageChange = (value: string) => {
+    setHeroData(prev => ({ ...prev, backgroundImage: value }));
+    updateHeroSection({ backgroundImage: value });
   };
 
-  const handleSaveContact = () => {
-    updateContact(contactData);
-    toast({
-      title: "Succès",
-      description: "Les informations de contact ont été sauvegardées!",
-    });
+  const handleContactChange = (field: string, value: string) => {
+    if (field.startsWith('hours.')) {
+      const hourField = field.split('.')[1];
+      setContactData(prev => ({
+        ...prev,
+        hours: { ...prev.hours, [hourField]: value }
+      }));
+      updateContact({
+        hours: { ...contactData.hours, [hourField]: value }
+      });
+    } else {
+      setContactData(prev => ({ ...prev, [field]: value }));
+      updateContact({ [field]: value });
+    }
   };
 
   const handleAddNewCategory = () => {
@@ -93,10 +97,6 @@ const Admin = () => {
         title: '',
         description: '',
         image: ''
-      });
-      toast({
-        title: "Succès",
-        description: "Nouvelle catégorie ajoutée avec succès!",
       });
     }
   };
@@ -123,10 +123,6 @@ const Admin = () => {
         weight: '',
         pricePerKg: '',
         categoryId: ''
-      });
-      toast({
-        title: "Succès",
-        description: "Nouveau produit ajouté avec succès!",
       });
     }
   };
@@ -185,16 +181,9 @@ const Admin = () => {
               <ImageUploader
                 label="Image de fond"
                 value={heroData.backgroundImage}
-                onChange={(value) => setHeroData(prev => ({ ...prev, backgroundImage: value }))}
+                onChange={handleHeroImageChange}
                 placeholder="URL de l'image de fond ou uploader depuis votre PC"
               />
-
-              <Button
-                onClick={handleSaveHero}
-                className="w-full bg-butchery-red hover:bg-red-800 text-white"
-              >
-                Sauvegarder l'image de fond
-              </Button>
             </CardContent>
           </Card>
         </div>
@@ -216,7 +205,7 @@ const Admin = () => {
                   <Input
                     id="contact-phone"
                     value={contactData.phone}
-                    onChange={(e) => setContactData(prev => ({ ...prev, phone: e.target.value }))}
+                    onChange={(e) => handleContactChange('phone', e.target.value)}
                     placeholder="05 61 86 54 42"
                   />
                 </div>
@@ -226,7 +215,7 @@ const Admin = () => {
                   <Textarea
                     id="contact-address"
                     value={contactData.address}
-                    onChange={(e) => setContactData(prev => ({ ...prev, address: e.target.value }))}
+                    onChange={(e) => handleContactChange('address', e.target.value)}
                     placeholder="Adresse complète"
                     rows={2}
                   />
@@ -238,7 +227,7 @@ const Admin = () => {
                     id="contact-email"
                     type="email"
                     value={contactData.email}
-                    onChange={(e) => setContactData(prev => ({ ...prev, email: e.target.value }))}
+                    onChange={(e) => handleContactChange('email', e.target.value)}
                     placeholder="contact@boucherie-hidaya.fr"
                   />
                 </div>
@@ -258,10 +247,7 @@ const Admin = () => {
                   <Input
                     id="hours-weekdays"
                     value={contactData.hours.weekdays}
-                    onChange={(e) => setContactData(prev => ({ 
-                      ...prev, 
-                      hours: { ...prev.hours, weekdays: e.target.value }
-                    }))}
+                    onChange={(e) => handleContactChange('hours.weekdays', e.target.value)}
                     placeholder="8h30-13h / 15h-19h30"
                   />
                 </div>
@@ -271,10 +257,7 @@ const Admin = () => {
                   <Input
                     id="hours-saturday"
                     value={contactData.hours.saturday}
-                    onChange={(e) => setContactData(prev => ({ 
-                      ...prev, 
-                      hours: { ...prev.hours, saturday: e.target.value }
-                    }))}
+                    onChange={(e) => handleContactChange('hours.saturday', e.target.value)}
                     placeholder="8h30-13h / 15h-19h30"
                   />
                 </div>
@@ -284,24 +267,12 @@ const Admin = () => {
                   <Input
                     id="hours-sunday"
                     value={contactData.hours.sunday}
-                    onChange={(e) => setContactData(prev => ({ 
-                      ...prev, 
-                      hours: { ...prev.hours, sunday: e.target.value }
-                    }))}
+                    onChange={(e) => handleContactChange('hours.sunday', e.target.value)}
                     placeholder="8h30-13h"
                   />
                 </div>
               </CardContent>
             </Card>
-          </div>
-          
-          <div className="mt-6">
-            <Button
-              onClick={handleSaveContact}
-              className="w-full bg-butchery-red hover:bg-red-800 text-white"
-            >
-              Sauvegarder les informations de contact
-            </Button>
           </div>
         </div>
 
@@ -371,7 +342,7 @@ const Admin = () => {
         </div>
 
         {/* Section gestion des produits individuels */}
-        <div className="mb-12">
+        <div className="mb-32">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Gestion des Produits Individuels</h2>
           
           {/* Produits existants avec vérification de sécurité */}
@@ -541,6 +512,8 @@ const Admin = () => {
           </Card>
         </div>
       </div>
+
+      <GlobalSaveButton />
     </div>
   );
 };
