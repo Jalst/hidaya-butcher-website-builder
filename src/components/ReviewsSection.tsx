@@ -19,37 +19,44 @@ interface Review {
 const reviews: Review[] = [
   {
     id: 1,
-    name: "Mohammed A.",
+    name: "Tristan N.",
     rating: 5,
-    comment: "Excellente boucherie halal ! La viande est toujours fraîche et de très bonne qualité. Le service est impeccable et les prix sont raisonnables. Je recommande vivement !",
-    date: "Il y a 2 semaines"
+    comment: "Deux commandes en livraison à domicile je ne peux que noter la satisfaction de manger de la très bonne viande. Un plaisir! La livraison par chronofresh est top et rapide. C'est devenu ma boucherie préférée. Je suis du puy de dôme.",
+    date: "Il y a 1 semaine"
   },
   {
     id: 2,
-    name: "Fatima B.",
+    name: "Audrey M.",
     rating: 5,
-    comment: "Boucherie de confiance à Cugnaux. Large choix de viandes halal, personnel très accueillant et conseils avisés. C'est ma boucherie de référence depuis des années.",
-    date: "Il y a 1 mois"
+    comment: "Parfait !",
+    date: "Il y a 2 semaines"
   },
   {
     id: 3,
-    name: "Ahmed K.",
+    name: "Marcel A.",
     rating: 5,
-    comment: "Qualité exceptionnelle ! Les produits sont toujours frais, la certification halal est rigoureuse. L'équipe est professionnelle et sympathique. Parfait !",
+    comment: "Viande de très bonne qualité et très fraîche avec un service irréprochable. Un élément de ma commande n'était plus disponible et ils m'ont proposé de l'échanger contre un autre produit ou un remboursement et pour s'excuser du dérangement ils m'ont changé mes entrecôtes que j'avais acheté en qualité standard par une qualité bien supérieure black Angus.",
     date: "Il y a 3 semaines"
   },
   {
     id: 4,
-    name: "Aicha M.",
+    name: "Nicolas G.",
     rating: 5,
-    comment: "Je fais mes courses ici depuis l'ouverture. Jamais déçue ! Viandes de première qualité, hygiène irréprochable et accueil chaleureux. Bravo !",
-    date: "Il y a 1 semaine"
+    comment: "Colis très soigné et produits de qualité",
+    date: "Il y a 1 mois"
   },
   {
     id: 5,
-    name: "Youssef L.",
+    name: "Théophile J.",
     rating: 5,
-    comment: "Boucherie au top ! Grande variété de produits, prix compétitifs et surtout une qualité constante. Le personnel est toujours de bon conseil.",
+    comment: "Commande au top.",
+    date: "Il y a 1 mois"
+  },
+  {
+    id: 6,
+    name: "Julie D.",
+    rating: 5,
+    comment: "Produits conforme aux produits exposés sur le site.",
     date: "Il y a 2 mois"
   }
 ];
@@ -90,7 +97,7 @@ const ReviewsSection = () => {
             <CarouselContent className="-ml-2 md:-ml-4">
               {reviews.map((review) => (
                 <CarouselItem key={review.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
-                  <div className="bg-gray-50 rounded-2xl p-6 h-full shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <div className="bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 h-full flex flex-col">
                     <div className="flex items-center mb-4">
                       <div className="flex space-x-1 mr-3">
                         {renderStars(review.rating)}
@@ -98,11 +105,11 @@ const ReviewsSection = () => {
                       <span className="text-sm text-gray-500">{review.date}</span>
                     </div>
                     
-                    <p className="text-gray-700 mb-4 leading-relaxed line-clamp-4">
+                    <p className="text-gray-700 mb-4 leading-relaxed flex-grow">
                       "{review.comment}"
                     </p>
                     
-                    <div className="mt-auto">
+                    <div className="mt-auto pt-2">
                       <p className="font-semibold text-butchery-red">
                         {review.name}
                       </p>
