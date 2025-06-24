@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ProductCategory } from '@/contexts/ProductsContext';
-import { Trash2, Plus, Minus } from 'lucide-react';
+import { Trash2, Save } from 'lucide-react';
 import ImageUploader from '@/components/ImageUploader';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProductCategoryEditorProps {
   category: ProductCategory;
@@ -15,25 +17,13 @@ interface ProductCategoryEditorProps {
 }
 
 const ProductCategoryEditor = ({ category, onUpdate, onDelete }: ProductCategoryEditorProps) => {
-  const [items, setItems] = useState(category.items);
+  const { toast } = useToast();
 
-  const handleItemChange = (index: number, value: string) => {
-    const newItems = [...items];
-    newItems[index] = value;
-    setItems(newItems);
-    onUpdate(category.id, { items: newItems });
-  };
-
-  const addItem = () => {
-    const newItems = [...items, ''];
-    setItems(newItems);
-    onUpdate(category.id, { items: newItems });
-  };
-
-  const removeItem = (index: number) => {
-    const newItems = items.filter((_, i) => i !== index);
-    setItems(newItems);
-    onUpdate(category.id, { items: newItems });
+  const handleSave = () => {
+    toast({
+      title: "Succès",
+      description: "Les modifications de la catégorie ont été sauvegardées!",
+    });
   };
 
   return (
@@ -79,40 +69,13 @@ const ProductCategoryEditor = ({ category, onUpdate, onDelete }: ProductCategory
           placeholder="URL de l'image ou uploader depuis votre PC"
         />
 
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <Label>Articles disponibles</Label>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={addItem}
-              className="flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Ajouter
-            </Button>
-          </div>
-          <div className="space-y-2">
-            {items.map((item, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Input
-                  value={item}
-                  onChange={(e) => handleItemChange(index, e.target.value)}
-                  placeholder="Description de l'article"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => removeItem(index)}
-                >
-                  <Minus className="w-4 h-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Button
+          onClick={handleSave}
+          className="w-full bg-butchery-red hover:bg-red-800 text-white"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          Sauvegarder la catégorie
+        </Button>
       </CardContent>
     </Card>
   );

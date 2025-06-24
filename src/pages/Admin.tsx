@@ -49,8 +49,7 @@ const Admin = () => {
   const [newCategory, setNewCategory] = useState({
     title: '',
     description: '',
-    image: '',
-    items: ['']
+    image: ''
   });
 
   const [newProduct, setNewProduct] = useState({
@@ -87,14 +86,13 @@ const Admin = () => {
         title: newCategory.title,
         description: newCategory.description,
         image: newCategory.image,
-        items: newCategory.items.filter(item => item.trim() !== ''),
-        products: [] // Ajout de la propriété manquante
+        items: [],
+        products: []
       });
       setNewCategory({
         title: '',
         description: '',
-        image: '',
-        items: ['']
+        image: ''
       });
       toast({
         title: "Succès",
@@ -133,23 +131,6 @@ const Admin = () => {
     }
   };
 
-  const handleNewCategoryItemChange = (index: number, value: string) => {
-    const newItems = [...newCategory.items];
-    newItems[index] = value;
-    setNewCategory(prev => ({ ...prev, items: newItems }));
-  };
-
-  const addNewCategoryItem = () => {
-    setNewCategory(prev => ({ ...prev, items: [...prev.items, ''] }));
-  };
-
-  const removeNewCategoryItem = (index: number) => {
-    setNewCategory(prev => ({
-      ...prev,
-      items: prev.items.filter((_, i) => i !== index)
-    }));
-  };
-
   const handleNewProductImageChange = (index: number, value: string) => {
     const newImages = [...newProduct.images];
     newImages[index] = value;
@@ -165,16 +146,6 @@ const Admin = () => {
       ...prev,
       images: prev.images.filter((_, i) => i !== index)
     }));
-  };
-
-  const addNewCategory = () => {
-    addCategory({
-      title: "Nouvelle Catégorie",
-      description: "Description de la nouvelle catégorie",
-      image: "",
-      items: [],
-      products: [] // Ajout de la propriété manquante
-    });
   };
 
   return (
@@ -388,41 +359,6 @@ const Admin = () => {
                 onChange={(value) => setNewCategory(prev => ({ ...prev, image: value }))}
                 placeholder="URL de l'image ou uploader depuis votre PC"
               />
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <Label>Articles disponibles</Label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={addNewCategoryItem}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  {newCategory.items.map((item, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <Input
-                        value={item}
-                        onChange={(e) => handleNewCategoryItemChange(index, e.target.value)}
-                        placeholder="Description de l'article"
-                      />
-                      {newCategory.items.length > 1 && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeNewCategoryItem(index)}
-                        >
-                          ×
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
 
               <Button
                 onClick={handleAddNewCategory}
