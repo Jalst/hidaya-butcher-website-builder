@@ -42,19 +42,19 @@ const ProductsSection = () => {
                   {category.description}
                 </p>
                 
-                {/* Aperçu des articles */}
+                {/* Aperçu des produits */}
                 <div className="mb-4">
                   <h4 className="font-semibold text-gray-900 mb-3">Aperçu des produits :</h4>
                   <ul className="space-y-2">
-                    {category.items.slice(0, 3).map((item, itemIndex) => (
-                      <li key={itemIndex} className="flex items-start">
+                    {category.products.slice(0, 3).map((product, productIndex) => (
+                      <li key={productIndex} className="flex items-start">
                         <span className="w-2 h-2 bg-butchery-gold rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                        <span className="text-gray-700 text-sm">{item}</span>
+                        <span className="text-gray-700 text-sm">{product.name}</span>
                       </li>
                     ))}
-                    {category.items.length > 3 && (
+                    {category.products.length > 3 && (
                       <li className="text-butchery-red text-sm font-medium">
-                        Et {category.items.length - 3} autres produits...
+                        Et {category.products.length - 3} autres produits...
                       </li>
                     )}
                   </ul>

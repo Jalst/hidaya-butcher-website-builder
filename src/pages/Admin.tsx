@@ -90,7 +90,6 @@ const Admin = () => {
         title: newCategory.title,
         description: newCategory.description,
         image: newCategory.image,
-        items: [],
         products: []
       });
       setNewCategory({
