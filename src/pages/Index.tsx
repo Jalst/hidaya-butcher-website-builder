@@ -5,6 +5,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Navigation from '../components/Navigation';
 import HeroSection from '../components/HeroSection';
 import ProductsSection from '../components/ProductsSection';
+import ReviewsSection from '../components/ReviewsSection';
 import ServicesSection from '../components/ServicesSection';
 import ContactSection from '../components/ContactSection';
 import Footer from '../components/Footer';
@@ -21,6 +22,7 @@ const Index = () => {
       <Navigation />
       <HeroSection />
       <ProductsSection />
+      <ReviewsSection />
       <ServicesSection />
       <ContactSection />
       <Footer />
