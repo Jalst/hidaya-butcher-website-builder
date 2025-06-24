@@ -33,27 +33,20 @@ const reviews: Review[] = [
   },
   {
     id: 3,
-    name: "Marcel A.",
-    rating: 5,
-    comment: "Viande de très bonne qualité et très fraîche avec un service irréprochable. Un élément de ma commande n'était plus disponible et ils m'ont proposé de l'échanger contre un autre produit ou un remboursement et pour s'excuser du dérangement ils m'ont changé mes entrecôtes que j'avais acheté en qualité standard par une qualité bien supérieure black Angus.",
-    date: "Il y a 3 semaines"
-  },
-  {
-    id: 4,
     name: "Nicolas G.",
     rating: 5,
     comment: "Colis très soigné et produits de qualité",
     date: "Il y a 1 mois"
   },
   {
-    id: 5,
+    id: 4,
     name: "Théophile J.",
     rating: 5,
     comment: "Commande au top.",
     date: "Il y a 1 mois"
   },
   {
-    id: 6,
+    id: 5,
     name: "Julie D.",
     rating: 5,
     comment: "Produits conforme aux produits exposés sur le site.",
