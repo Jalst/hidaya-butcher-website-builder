@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,13 +8,16 @@ import { useProducts } from '@/contexts/ProductsContext';
 import { useToast } from '@/hooks/use-toast';
 
 const DataManager = () => {
-  const { exportData, importData } = useProducts();
+  const { exportData, importData, saveAllChanges } = useProducts();
   const { toast } = useToast();
   const [isImporting, setIsImporting] = useState(false);
   const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const handleExport = () => {
     try {
+      // Sauvegarder toutes les modifications avant l'export
+      saveAllChanges();
+      
       const data = exportData();
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -29,7 +31,8 @@ const DataManager = () => {
       
       toast({
         title: "Succès",
-        description: "Les données ont été exportées avec succès!",
+        description: "Modifications sauvegardées et fichier JSON téléchargé! Uploadez ce fichier sur votre serveur pour mettre à jour le site.",
+        duration: 5000,
       });
     } catch (error) {
       toast({

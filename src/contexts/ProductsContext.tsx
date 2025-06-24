@@ -17,7 +17,6 @@ export interface ProductCategory {
   title: string;
   description: string;
   image: string;
-  items: string[];
   products: Product[];
 }
 
@@ -83,46 +82,49 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Essayer de charger depuis le fichier JSON public
+        // Charger d'abord depuis localStorage (données modifiées)
+        const savedData = localStorage.getItem('siteData');
+        if (savedData) {
+          console.log('Chargement depuis localStorage...');
+          setSiteData(JSON.parse(savedData));
+          setLoading(false);
+          return;
+        }
+
+        // Si pas de données locales, charger depuis le fichier JSON public
         const response = await fetch('/data.json');
         if (response.ok) {
           const data = await response.json();
           setSiteData(data);
-          // Sauvegarder dans localStorage comme fallback
+          // Sauvegarder dans localStorage pour la prochaine fois
           localStorage.setItem('siteData', JSON.stringify(data));
         } else {
           throw new Error('Fichier data.json non trouvé');
         }
       } catch (error) {
-        console.log('Chargement depuis localStorage...');
-        // Fallback vers localStorage
-        const savedData = localStorage.getItem('siteData');
-        if (savedData) {
-          setSiteData(JSON.parse(savedData));
-        } else {
-          // Données par défaut si rien n'est trouvé
-          console.log('Utilisation des données par défaut');
-          const defaultData: SiteData = {
-            heroSection: {
-              title: "Boucherie Artisanale",
-              subtitle: "Viandes fraîches et de qualité",
-              backgroundImage: "/lovable-uploads/6e143375-4021-47b2-971f-6a9b56b26d8f.png"
-            },
-            categories: [],
-            services: [],
-            contact: {
-              address: "36 Avenue Georges Pompidou, 31270 Cugnaux, France",
-              phone: "05 61 86 54 42",
-              email: "contact@boucherie-hidaya.fr",
-              hours: {
-                weekdays: "8h30-13h / 15h-19h30",
-                saturday: "8h30-13h / 15h-19h30",
-                sunday: "8h30-13h"
-              }
+        console.log('Erreur lors du chargement, utilisation des données par défaut');
+        // Données par défaut si rien n'est trouvé
+        const defaultData: SiteData = {
+          heroSection: {
+            title: "Boucherie Artisanale",
+            subtitle: "Viandes fraîches et de qualité",
+            backgroundImage: "/lovable-uploads/6e143375-4021-47b2-971f-6a9b56b26d8f.png"
+          },
+          categories: [],
+          services: [],
+          contact: {
+            address: "36 Avenue Georges Pompidou, 31270 Cugnaux, France",
+            phone: "05 61 86 54 42",
+            email: "contact@boucherie-hidaya.fr",
+            hours: {
+              weekdays: "8h30-13h / 15h-19h30",
+              saturday: "8h30-13h / 15h-19h30",
+              sunday: "8h30-13h"
             }
-          };
-          setSiteData(defaultData);
-        }
+          }
+        };
+        setSiteData(defaultData);
+        localStorage.setItem('siteData', JSON.stringify(defaultData));
       } finally {
         setLoading(false);
       }
@@ -133,16 +135,16 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
 
   const saveData = (data: SiteData, markAsUnsaved = true) => {
     setSiteData(data);
+    // Sauvegarder automatiquement dans localStorage à chaque modification
+    localStorage.setItem('siteData', JSON.stringify(data));
     if (markAsUnsaved) {
       setHasUnsavedChanges(true);
     }
   };
 
   const saveAllChanges = () => {
-    if (siteData) {
-      localStorage.setItem('siteData', JSON.stringify(siteData));
-      setHasUnsavedChanges(false);
-    }
+    // Cette fonction ne fait plus rien car les données sont déjà sauvegardées automatiquement
+    setHasUnsavedChanges(false);
   };
 
   const resetUnsavedChanges = () => {
@@ -256,7 +258,6 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
 
   const importData = (data: SiteData) => {
     saveData(data, false);
-    localStorage.setItem('siteData', JSON.stringify(data));
   };
 
   const getProductById = (productId: string): Product | undefined => {
