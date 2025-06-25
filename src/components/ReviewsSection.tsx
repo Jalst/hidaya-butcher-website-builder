@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import {
   Carousel,
@@ -90,27 +92,24 @@ const ReviewsSection = () => {
             <CarouselContent className="-ml-2 md:-ml-4">
               {reviews.map((review) => (
                 <CarouselItem key={review.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
-                  <div className="bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 min-h-[200px] flex flex-col">
-                    {/* Header avec étoiles et date */}
-                    <div className="flex items-center justify-between mb-4 flex-shrink-0">
-                      <div className="flex space-x-1">
-                        {renderStars(review.rating)}
+                  <div className="bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 h-[280px] flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex space-x-1">
+                          {renderStars(review.rating)}
+                        </div>
+                        <span className="text-sm text-gray-500">{review.date}</span>
                       </div>
-                      <span className="text-sm text-gray-500">{review.date}</span>
-                    </div>
-                    
-                    {/* Contenu du commentaire - flexible */}
-                    <div className="flex-1 flex flex-col justify-between">
-                      <p className="text-gray-700 leading-relaxed text-sm mb-4 flex-1">
+                      
+                      <p className="text-gray-700 leading-relaxed text-sm line-clamp-6">
                         "{review.comment}"
                       </p>
-                      
-                      {/* Footer avec nom - toujours visible */}
-                      <div className="border-t border-gray-200 pt-4 flex-shrink-0">
-                        <p className="font-semibold text-butchery-red">
-                          {review.name}
-                        </p>
-                      </div>
+                    </div>
+                    
+                    <div className="border-t border-gray-200 pt-4 mt-4">
+                      <p className="font-semibold text-butchery-red">
+                        {review.name}
+                      </p>
                     </div>
                   </div>
                 </CarouselItem>
@@ -126,3 +125,4 @@ const ReviewsSection = () => {
 };
 
 export default ReviewsSection;
+
