@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 import {
   Carousel,
@@ -69,7 +68,7 @@ const ReviewsSection = () => {
   };
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-white overflow-visible">
       <div className="section-padding">
         <div className="text-center mb-16">
           <h2 className="font-playfair text-4xl md:text-5xl font-bold text-butchery-red mb-6">
@@ -81,32 +80,32 @@ const ReviewsSection = () => {
           </p>
         </div>
 
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto overflow-visible">
           <Carousel
             opts={{
               align: "start",
               loop: true,
             }}
-            className="w-full"
+            className="w-full overflow-visible"
           >
-            <CarouselContent className="-ml-2 md:-ml-4">
+            <CarouselContent className="-ml-2 md:-ml-4 overflow-visible">
               {reviews.map((review) => (
-                <CarouselItem key={review.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
-                  <div className="bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 h-[280px] flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex space-x-1">
-                          {renderStars(review.rating)}
-                        </div>
-                        <span className="text-sm text-gray-500">{review.date}</span>
+                <CarouselItem key={review.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3 overflow-visible">
+                  <div className="bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 h-auto min-h-[200px] flex flex-col">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex space-x-1">
+                        {renderStars(review.rating)}
                       </div>
-                      
-                      <p className="text-gray-700 leading-relaxed text-sm line-clamp-6">
+                      <span className="text-sm text-gray-500">{review.date}</span>
+                    </div>
+                    
+                    <div className="flex-1 mb-4">
+                      <p className="text-gray-700 leading-relaxed text-sm">
                         "{review.comment}"
                       </p>
                     </div>
                     
-                    <div className="border-t border-gray-200 pt-4 mt-4">
+                    <div className="border-t border-gray-200 pt-4">
                       <p className="font-semibold text-butchery-red">
                         {review.name}
                       </p>
@@ -125,4 +124,3 @@ const ReviewsSection = () => {
 };
 
 export default ReviewsSection;
-
