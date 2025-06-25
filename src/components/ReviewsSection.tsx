@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Carousel,
@@ -90,19 +91,19 @@ const ReviewsSection = () => {
             <CarouselContent className="-ml-2 md:-ml-4">
               {reviews.map((review) => (
                 <CarouselItem key={review.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
-                  <div className="bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 h-full flex flex-col">
-                    <div className="flex items-center mb-4">
-                      <div className="flex space-x-1 mr-3">
+                  <div className="bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 min-h-[200px] flex flex-col">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex space-x-1">
                         {renderStars(review.rating)}
                       </div>
                       <span className="text-sm text-gray-500">{review.date}</span>
                     </div>
                     
-                    <p className="text-gray-700 mb-4 leading-relaxed flex-grow">
+                    <p className="text-gray-700 mb-6 leading-relaxed flex-1">
                       "{review.comment}"
                     </p>
                     
-                    <div className="mt-auto pt-2">
+                    <div className="border-t border-gray-200 pt-4">
                       <p className="font-semibold text-butchery-red">
                         {review.name}
                       </p>
