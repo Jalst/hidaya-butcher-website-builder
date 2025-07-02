@@ -83,9 +83,9 @@ const ReviewsSection = () => {
   };
 
   return (
-    <section className="py-20 bg-white">
-      <div className="section-padding">
-        <div className="text-center mb-16">
+    <section className="py-24 bg-white min-h-[600px]">
+      <div className="section-padding pb-16">
+        <div className="text-center mb-20">
           <h2 className="font-playfair text-4xl md:text-5xl font-bold text-butchery-red mb-6">
             Avis de nos Clients
           </h2>
@@ -128,7 +128,7 @@ const ReviewsSection = () => {
                   key={review.id} 
                   className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-3"
                 >
-                  <div className="bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 h-auto min-h-[280px] flex flex-col">
+                  <div className="bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 h-auto min-h-[320px] flex flex-col mb-4">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex space-x-1">
                         {renderStars(review.rating)}
