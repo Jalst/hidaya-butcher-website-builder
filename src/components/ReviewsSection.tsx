@@ -68,7 +68,7 @@ const ReviewsSection = () => {
   };
 
   return (
-    <section className="py-20 bg-white overflow-visible">
+    <section className="py-20 bg-white">
       <div className="section-padding">
         <div className="text-center mb-16">
           <h2 className="font-playfair text-4xl md:text-5xl font-bold text-butchery-red mb-6">
@@ -80,18 +80,18 @@ const ReviewsSection = () => {
           </p>
         </div>
 
-        <div className="max-w-6xl mx-auto overflow-visible">
+        <div className="max-w-6xl mx-auto">
           <Carousel
             opts={{
               align: "start",
               loop: true,
             }}
-            className="w-full overflow-visible"
+            className="w-full"
           >
-            <CarouselContent className="-ml-2 md:-ml-4 overflow-visible">
+            <CarouselContent className="-ml-2 md:-ml-4">
               {reviews.map((review) => (
-                <CarouselItem key={review.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3 overflow-visible">
-                  <div className="bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 h-[280px] flex flex-col">
+                <CarouselItem key={review.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                  <div className="bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 h-[250px] flex flex-col">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex space-x-1">
                         {renderStars(review.rating)}
@@ -100,7 +100,7 @@ const ReviewsSection = () => {
                     </div>
                     
                     <div className="flex-1 mb-4 overflow-hidden">
-                      <p className="text-gray-700 leading-relaxed text-sm line-clamp-6">
+                      <p className="text-gray-700 leading-relaxed text-sm line-clamp-4">
                         "{review.comment}"
                       </p>
                     </div>
