@@ -1,13 +1,7 @@
 
-import React from 'react';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface Review {
   id: number;
@@ -56,6 +50,13 @@ const reviews: Review[] = [
 ];
 
 const ReviewsSection = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const cardsPerView = {
+    mobile: 1,
+    tablet: 2,
+    desktop: 3
+  };
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
       <Star
@@ -65,6 +66,20 @@ const ReviewsSection = () => {
         }`}
       />
     ));
+  };
+
+  const nextSlide = () => {
+    setCurrentIndex((prevIndex) => {
+      const maxIndex = reviews.length - cardsPerView.desktop;
+      return prevIndex >= maxIndex ? 0 : prevIndex + 1;
+    });
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prevIndex) => {
+      const maxIndex = reviews.length - cardsPerView.desktop;
+      return prevIndex <= 0 ? maxIndex : prevIndex - 1;
+    });
   };
 
   return (
@@ -80,18 +95,40 @@ const ReviewsSection = () => {
           </p>
         </div>
 
-        <div className="max-w-6xl mx-auto">
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full"
+        <div className="max-w-6xl mx-auto relative">
+          {/* Navigation Buttons */}
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 hidden md:flex bg-white shadow-lg hover:shadow-xl -translate-x-6"
+            onClick={prevSlide}
           >
-            <CarouselContent className="-ml-2 md:-ml-4">
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 hidden md:flex bg-white shadow-lg hover:shadow-xl translate-x-6"
+            onClick={nextSlide}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+
+          {/* Carousel Container */}
+          <div className="overflow-hidden">
+            <div 
+              className="flex transition-transform duration-300 ease-in-out"
+              style={{
+                transform: `translateX(-${currentIndex * (100 / cardsPerView.desktop)}%)`
+              }}
+            >
               {reviews.map((review) => (
-                <CarouselItem key={review.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
-                  <div className="bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 h-[300px] flex flex-col">
+                <div 
+                  key={review.id} 
+                  className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-3"
+                >
+                  <div className="bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 h-auto min-h-[280px] flex flex-col">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex space-x-1">
                         {renderStars(review.rating)}
@@ -99,8 +136,8 @@ const ReviewsSection = () => {
                       <span className="text-sm text-gray-500">{review.date}</span>
                     </div>
                     
-                    <div className="flex-1 mb-4 overflow-hidden">
-                      <p className="text-gray-700 leading-relaxed text-sm line-clamp-5">
+                    <div className="flex-1 mb-4">
+                      <p className="text-gray-700 leading-relaxed text-sm">
                         "{review.comment}"
                       </p>
                     </div>
@@ -111,12 +148,23 @@ const ReviewsSection = () => {
                       </p>
                     </div>
                   </div>
-                </CarouselItem>
+                </div>
               ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
-          </Carousel>
+            </div>
+          </div>
+
+          {/* Mobile Navigation Dots */}
+          <div className="flex justify-center space-x-2 mt-6 md:hidden">
+            {reviews.map((_, index) => (
+              <button
+                key={index}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  index === currentIndex ? 'bg-butchery-red' : 'bg-gray-300'
+                }`}
+                onClick={() => setCurrentIndex(index)}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
